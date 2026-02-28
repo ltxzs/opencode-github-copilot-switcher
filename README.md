@@ -8,14 +8,13 @@ A seamless Tauri-based desktop application designed to manage, switch, and authe
 
 - **Multi-Account Management:** Easily add and switch between multiple GitHub accounts.
 - **Hot-Switching:** Seamlessly switch accounts directly in your current session without needing to restart OpenCode.
-- **Native Device Flow Authentication:** Utilizes the official OpenCode GitHub Copilot Client ID (`Ov23li8tweQw6odWQebz`). This natively bypasses any server-side "unsupported model" restrictions, granting full access to premium models like GPT-4 and Claude 3.5.
+- **Native Device Flow Authentication:** Utilizes the official OpenCode GitHub Copilot Client ID (`Ov23li8tweQw6odWQebz`) to ensure full compatibility with the OpenCode extension.
 - **Auto-Copy Device Code:** Automatically copies your authentication device code to the clipboard and provides an intuitive Toast notification.
 - **Cross-Platform:** Available for Windows, macOS, and Linux.
 
 ## Why this app?
 
-1. **Better UX than native OpenCode:** The native process for switching GitHub Copilot accounts in OpenCode is complex and unintuitive. This tool provides a clear, user-friendly interface to manage multiple accounts and supports **hot-switching**—meaning you can switch accounts on the fly without having to restart the OpenCode application.
-2. **Bypassing Model Restrictions:** OpenCode enforces a strict backend whitelist for GitHub Copilot tokens. If you use a custom OAuth App Client ID, the OpenCode backend will recognize it as unofficial and block access to advanced models (e.g., throwing "The requested model is not supported" errors). This app uses the **extracted official native Client ID** to mint tokens, ensuring that you get the exact same premium AI capabilities as the official OpenCode extension.
+**Better UX than native OpenCode:** The native process for switching GitHub Copilot accounts in OpenCode is complex and unintuitive. This tool provides a clear, user-friendly interface to manage multiple accounts and supports **hot-switching**—meaning you can switch accounts on the fly without having to restart the OpenCode application.
 
 ## Installation
 
