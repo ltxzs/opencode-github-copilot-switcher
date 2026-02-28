@@ -8,7 +8,7 @@
 
 - **多账号管理：** 轻松添加并在多个 GitHub 账号之间切换。
 - **无缝热切换：** 支持在当前会话中直接进行热切换账号，**无需重启 OpenCode** 即可生效。
-- **原生设备授权登录：** 深度集成提取自官方的 OpenCode GitHub Copilot Client ID (`Ov23li8tweQw6odWQebz`)，确保与官方扩展完全兼容。
+- **原生设备授权登录：** 深度集成提取自官方的 OpenCode GitHub Copilot Client ID，确保与官方扩展完全兼容。
 - **自动复制设备码：** 在进行 GitHub 授权时，自动将验证码复制到剪贴板，并弹出 Toast 提示用户，简化操作流程。
 - **跨平台支持：** 提供 Windows、macOS 和 Linux 三个平台的安装包。
 
