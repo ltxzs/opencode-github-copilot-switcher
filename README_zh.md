@@ -1,21 +1,21 @@
 # OpenCode GitHub Copilot Switcher
 
-[English](./README.md) | [简体中文](./README_zh.md)
+[English](./README.md) | [简体中文](./README_zh.md) | [日本語](./README_ja.md)
 
 一款基于 Tauri 构建的跨平台桌面端工具，旨在为 OpenCode 用户提供便捷的 GitHub Copilot 账号管理、切换与设备授权流登录功能。
 
 ## 功能特性
 
-- **多账号管理：** 轻松添加和在多个 GitHub 账号之间切换。
+- **多账号管理：** 轻松添加并在多个 GitHub 账号之间切换。
+- **无缝热切换：** 支持在当前会话中直接进行热切换账号，**无需重启 OpenCode** 即可生效。
 - **原生设备授权登录：** 深度集成提取自官方的 OpenCode GitHub Copilot Client ID (`Ov23li8tweQw6odWQebz`)。完美绕过服务端的模型限制，确保随时可用 GPT-4 和 Claude 3.5 等高级模型。
 - **自动复制设备码：** 在进行 GitHub 授权时，自动将验证码复制到剪贴板，并弹出 Toast 提示用户，简化操作流程。
 - **跨平台支持：** 提供 Windows、macOS 和 Linux 三个平台的安装包。
 
 ## 为什么需要这个工具？
 
-OpenCode 在其后端对 GitHub Copilot 的 Token 进行了严格的白名单校验。如果你通过自己创建的 OAuth App 获取授权（使用自定义的 Client ID），OpenCode 的服务器会将其识别为非官方 Token，并在请求高级 AI 模型时拒绝服务（提示：“The requested model is not supported”）。
-
-为了解决这个问题，本工具逆向提取了 OpenCode 原生的插件 Client ID 来进行 Token 生成，从而确保你能享受到和官方扩展完全一样的高级 AI 能力，并额外拥有多账号自由切换的便利。
+1. **解决原生切换繁琐的问题：** OpenCode 原生切换 GitHub Copilot 账号的步骤非常复杂且不够直观。而本项目提供了一个清晰的界面，让你不仅能方便地管理账号，还能实现**热切换**（无缝切换账号而无需重启 OpenCode 客户端）。
+2. **绕过模型使用限制：** OpenCode 在其后端对 GitHub Copilot 的 Token 进行了严格的白名单校验。如果你通过自己创建的 OAuth App 获取授权（使用自定义的 Client ID），OpenCode 的服务器会将其识别为非官方 Token，并在请求高级 AI 模型时拒绝服务（提示：“The requested model is not supported”）。本项目逆向提取了官方原生 Client ID 来生成 Token，确保你能享受与官方扩展完全一致的高级 AI 能力。
 
 ## 安装指南
 
