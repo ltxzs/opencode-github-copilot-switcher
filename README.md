@@ -12,6 +12,13 @@ A seamless Tauri-based desktop application designed to manage, switch, and authe
 - **Auto-Copy Device Code:** Automatically copies your authentication device code to the clipboard and provides an intuitive Toast notification.
 - **Cross-Platform:** Available for Windows, macOS, and Linux.
 
+## Visual Interface & Seamless Operation
+
+![Main Interface](./assets/main.png)
+![Authorization Flow](./assets/auth.png)
+
+This tool offers a clear visual interface that makes managing multiple GitHub Copilot accounts incredibly intuitive. Instead of dealing with complex CLI commands or repetitive native login flows, you can concretely and visually view your active accounts, add new ones, and hot-switch between them with a single click.
+
 ## Why this app?
 
 **Better UX than native OpenCode:** The native process for switching GitHub Copilot accounts in OpenCode is complex and unintuitive. This tool provides a clear, user-friendly interface to manage multiple accounts and supports **hot-switching**—meaning you can switch accounts on the fly without having to restart the OpenCode application.
