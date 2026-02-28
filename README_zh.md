@@ -16,6 +16,8 @@
 
 **解决原生切换繁琐的问题：** OpenCode 原生切换 GitHub Copilot 账号的步骤非常复杂且不够直观。而本项目提供了一个清晰的界面，让你不仅能方便地管理账号，还能实现**热切换**（无缝切换账号而无需重启 OpenCode 客户端），极大地提升了使用体验。
 
+**突破优惠账号额度限制的频繁切换：** 本工具的设计初衷是为了解决在 OpenCode 中登录 GitHub Copilot 首月免费或教育认证等优惠账号时，因受限于账号的额度而无法进行重度使用，从而需要频繁切换账号的问题。OpenCode 原生的切换方式重复且繁琐，本工具通过热切换机制极大地简化了这一流程。
+
 ## 安装指南
 
 请前往项目的 [Releases](https://github.com/ltxzs/opencode-github-copilot-switcher/releases) 页面，下载适合您操作系统的最新版本。

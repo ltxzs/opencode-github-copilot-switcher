@@ -16,6 +16,8 @@ A seamless Tauri-based desktop application designed to manage, switch, and authe
 
 **Better UX than native OpenCode:** The native process for switching GitHub Copilot accounts in OpenCode is complex and unintuitive. This tool provides a clear, user-friendly interface to manage multiple accounts and supports **hot-switching**—meaning you can switch accounts on the fly without having to restart the OpenCode application.
 
+**Designed for Frequent Account Switching:** This tool was originally designed to solve a specific problem: users logging into GitHub Copilot in OpenCode with first-month free or educational discount accounts often hit usage limits, requiring them to frequently switch accounts to continue using the service heavily. Because OpenCode's native switching method is repetitive and tedious, this tool provides a streamlined, seamless hot-switching experience to bypass this hassle.
+
 ## Installation
 
 Download the latest release for your platform from the [Releases](https://github.com/ltxzs/opencode-github-copilot-switcher/releases) page.
