@@ -15,6 +15,8 @@ export default function App() {
   const [deviceCode, setDeviceCode] = useState(null);
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
   
   const [currentLang, setCurrentLang] = useState(() => {
     return localStorage.getItem('app_language') || 'en';
@@ -51,8 +53,25 @@ export default function App() {
     }
   };
 
+  const syncActiveAccount = async () => {
+    try {
+      setIsSyncing(true);
+      await invoke('sync_active_account');
+      await fetchProviders();
+    } catch (e) {
+      console.error("Failed to sync active account:", e);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   useEffect(() => {
-    fetchProviders();
+    const init = async () => {
+      await syncActiveAccount();
+      // fetchProviders is already called inside syncActiveAccount, but we can call it again or rely on it.
+      await fetchProviders();
+    };
+    init();
   }, []);
 
   const handleStartAuth = async () => {
@@ -174,14 +193,24 @@ export default function App() {
             </div>
           </div>
           
-          <button 
-            onClick={handleStartAuth}
-            disabled={isAuthenticating}
-            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
-          >
-            {isAuthenticating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
-            {t('addAccount')}
-          </button>
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={syncActiveAccount}
+              disabled={isSyncing}
+              className="p-2.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+              title={t('syncAccount')}
+            >
+              <RefreshCw className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+            </button>
+            <button 
+              onClick={handleStartAuth}
+              disabled={isAuthenticating}
+              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
+            >
+              {isAuthenticating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
+              {t('addAccount')}
+            </button>
+          </div>
         </div>
 
         {error && (

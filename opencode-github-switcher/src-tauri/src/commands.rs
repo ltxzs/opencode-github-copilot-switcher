@@ -58,3 +58,9 @@ pub async fn switch_provider(state: State<'_, AppState>, id: String) -> Result<(
 pub async fn open_url(app: AppHandle, url: String) -> Result<(), String> {
     app.shell().open(url, None).map_err(|e| e.to_string())
 }
+
+#[tauri::command]
+pub async fn sync_active_account(state: State<'_, AppState>) -> Result<(), AppError> {
+    let pool = get_db(&state).await?;
+    provider_service::sync_active_account(&pool).await
+}

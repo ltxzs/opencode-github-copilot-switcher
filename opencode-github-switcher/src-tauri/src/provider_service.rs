@@ -1,4 +1,4 @@
-use crate::auth_config::update_auth_json;
+use crate::auth_config::{update_auth_json, read_current_token};
 use crate::error::AppError;
 use crate::github_oauth::{get_device_code, get_user_info, poll_for_token};
 use crate::models::{DeviceCodeResponse, GitHubProvider};
@@ -88,5 +88,55 @@ pub async fn switch_provider(pool: &SqlitePool, id: &str) -> Result<(), AppError
         .execute(pool)
         .await?;
 
+    Ok(())
+}
+
+pub async fn sync_active_account(pool: &SqlitePool) -> Result<(), AppError> {
+    if let Some(token) = read_current_token() {
+        // Try to fetch user info to verify token and get details
+        if let Ok(user_info) = get_user_info(&token).await {
+            let now = Utc::now().timestamp();
+            
+            // Check if this provider already exists
+            let existing: Option<GitHubProvider> = sqlx::query_as(
+                "SELECT * FROM github_providers WHERE github_id = ?"
+            )
+            .bind(user_info.id)
+            .fetch_optional(pool)
+            .await?;
+
+            if let Some(mut provider) = existing {
+                // Update token and last used time if it already exists
+                sqlx::query(
+                    "UPDATE github_providers SET access_token = ?, name = ?, email = ?, avatar_url = ?, last_used_at = ? WHERE github_id = ?"
+                )
+                .bind(&token)
+                .bind(&user_info.login)
+                .bind(&user_info.email)
+                .bind(&user_info.avatar_url)
+                .bind(now)
+                .bind(user_info.id)
+                .execute(pool)
+                .await?;
+            } else {
+                // Insert new provider if it doesn't exist
+                let id = Uuid::new_v4().to_string();
+                sqlx::query(
+                    "INSERT INTO github_providers (id, name, access_token, email, avatar_url, github_id, created_at, last_used_at) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                )
+                .bind(&id)
+                .bind(&user_info.login)
+                .bind(&token)
+                .bind(&user_info.email)
+                .bind(&user_info.avatar_url)
+                .bind(user_info.id)
+                .bind(now)
+                .bind(now)
+                .execute(pool)
+                .await?;
+            }
+        }
+    }
     Ok(())
 }

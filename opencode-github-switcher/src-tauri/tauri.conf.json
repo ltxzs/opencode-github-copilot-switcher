@@ -1,6 +1,6 @@
 {
   "productName": "opencode-github-switcher",
-  "version": "0.1.0",
+  "version": "0.1.6",
   "identifier": "com.opencode.github.switcher",
   "build": {
     "frontendDist": "../dist",

@@ -1,6 +1,6 @@
 [package]
 name = "opencode-github-switcher"
-version = "0.1.0"
+version = "0.1.6"
 description = "A Tauri App for OpenCode GitHub Copilot Switcher"
 authors = ["you"]
 license = ""

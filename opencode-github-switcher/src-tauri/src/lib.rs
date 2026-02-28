@@ -20,7 +20,8 @@ pub fn run() {
             commands::complete_device_flow,
             commands::delete_provider,
             commands::switch_provider,
-            commands::open_url
+            commands::open_url,
+            commands::sync_active_account
         ])
         .setup(|_app| {
             // Setup logic will be initialized in commands/state when called

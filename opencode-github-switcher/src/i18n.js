@@ -21,6 +21,7 @@ export const translations = {
     failDelete: "Failed to delete: ",
     copyCode: "Copy code",
     codeCopiedToast: "Verification code copied to clipboard! Please paste it in the browser.",
+    syncAccount: "Sync current OpenCode account",
   },
   zh: {
     appTitle: "OpenCode Switcher",
@@ -44,6 +45,7 @@ export const translations = {
     failDelete: "删除失败: ",
     copyCode: "复制验证码",
     codeCopiedToast: "验证码已自动复制到剪贴板！请在弹出的浏览器中粘贴。",
+    syncAccount: "同步当前 OpenCode 账号",
   },
   ja: {
     appTitle: "OpenCode Switcher",
@@ -67,6 +69,7 @@ export const translations = {
     failDelete: "削除に失敗しました: ",
     copyCode: "コードをコピー",
     codeCopiedToast: "認証コードがクリップボードにコピーされました！ブラウザで貼り付けてください。",
+    syncAccount: "現在ログイン中のアカウントを同期",
   }
 };
 
