@@ -14,9 +14,10 @@
 
 ## 可视化操作体验
 
-![主界面](./assets/main_zh.png)
-![授权流程](./assets/auth_zh.png)
-![授权流程](./assets/auth.png)
+<p align="center">
+  <img src="./assets/main_zh.png" width="48%" alt="主界面" />
+  <img src="./assets/auth_zh.png" width="48%" alt="授权流程" />
+</p>
 
 本工具提供了清晰直观的可视化界面，这也是其核心的操作优势。你可以非常具体形象地管理你的 GitHub Copilot 账号：一目了然地查看当前活跃账号、便捷地添加新账号，以及通过一键点击实现无缝热切换，彻底摆脱原生环境中重复且繁琐的命令或盲目的登录流程。
 

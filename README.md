@@ -14,8 +14,10 @@ A seamless Tauri-based desktop application designed to manage, switch, and authe
 
 ## Visual Interface & Seamless Operation
 
-![Main Interface](./assets/main.png)
-![Authorization Flow](./assets/auth.png)
+<p align="center">
+  <img src="./assets/main.png" width="48%" alt="Main Interface" />
+  <img src="./assets/auth.png" width="48%" alt="Authorization Flow" />
+</p>
 
 This tool offers a clear visual interface that makes managing multiple GitHub Copilot accounts incredibly intuitive. Instead of dealing with complex CLI commands or repetitive native login flows, you can concretely and visually view your active accounts, add new ones, and hot-switch between them with a single click.
 
