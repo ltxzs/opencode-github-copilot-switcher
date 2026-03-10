@@ -51,15 +51,14 @@ jobs:
           releaseBody: |
             ## What's New
             
-            ### ✨ Copilot Premium Request Quota Display
-            - View premium request usage percentage for each account with a visual progress bar
-            - Color-coded indicator: 🔵 normal (<50%) → 🟠 warning (50-80%) → 🔴 critical (>80%)
-            - Shows remaining/total requests count and quota reset date
-            - Supports unlimited quota display
-            - Plan type badge per account (Pro, Free, Business, Enterprise, Individual)
-            - Full i18n support (English, 简体中文, 日本語)
+            ### 🔄 Refresh Button Enhancement
+            - The refresh button now also refreshes Copilot premium request quota data for all accounts
+            - Previously it only synced the active account from OpenCode
             
-            ### 🐛 Bug Fixes
-            - Fixed: deleting an account now correctly removes it from OpenCode's auth.json (previously only removed from local database)
+            ### Previous Features (v0.1.7)
+            - Copilot premium request quota display with visual progress bar
+            - Plan type badge per account (Pro, Free, Business, Enterprise, Individual)
+            - Fixed account deletion to properly clean up auth.json
+            - Full i18n support (English, 简体中文, 日本語)
           releaseDraft: false
           prerelease: false

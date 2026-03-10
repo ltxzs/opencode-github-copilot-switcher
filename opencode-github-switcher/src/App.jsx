@@ -63,7 +63,12 @@ export default function App() {
     try {
       setIsSyncing(true);
       await invoke('sync_active_account');
-      await fetchProviders();
+      const data = await invoke('list_providers');
+      setProviders(data);
+      setError(null);
+      if (data.length > 0) {
+        fetchAllQuotas(data);
+      }
     } catch (e) {
       console.error("Failed to sync active account:", e);
     } finally {
