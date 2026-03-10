@@ -1,7 +1,8 @@
 use crate::database::init_db;
 use crate::error::AppError;
-use crate::models::{DeviceCodeResponse, GitHubProvider};
+use crate::models::{CopilotQuota, DeviceCodeResponse, GitHubProvider};
 use crate::provider_service;
+use crate::copilot_quota;
 use crate::state::AppState;
 use tauri::State;
 use tauri::AppHandle;
@@ -63,4 +64,16 @@ pub async fn open_url(app: AppHandle, url: String) -> Result<(), String> {
 pub async fn sync_active_account(state: State<'_, AppState>) -> Result<(), AppError> {
     let pool = get_db(&state).await?;
     provider_service::sync_active_account(&pool).await
+}
+
+#[tauri::command]
+pub async fn fetch_copilot_quota(state: State<'_, AppState>, id: String) -> Result<CopilotQuota, AppError> {
+    let pool = get_db(&state).await?;
+    let provider = sqlx::query_as::<_, GitHubProvider>("SELECT * FROM github_providers WHERE id = ?")
+        .bind(&id)
+        .fetch_optional(&pool)
+        .await?
+        .ok_or_else(|| AppError::ProviderNotFound(id))?;
+
+    copilot_quota::fetch_copilot_quota(&provider.access_token).await
 }

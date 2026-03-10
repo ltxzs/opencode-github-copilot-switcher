@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
+use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, Clone, FromRow)]
 pub struct GitHubProvider {
@@ -89,4 +90,42 @@ pub struct GitHubEmail {
     pub email: String,
     pub primary: bool,
     pub verified: bool,
+}
+
+/// Response from POST /copilot_internal/v2/token
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CopilotTokenResponse {
+    pub token: String,
+    pub expires_at: i64,
+    pub refresh_in: i64,
+}
+
+/// Individual quota detail (premium_interactions, chat, completions)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuotaDetail {
+    pub entitlement: Option<f64>,
+    pub remaining: Option<f64>,
+    pub percent_remaining: Option<f64>,
+    pub overage_count: Option<f64>,
+    pub overage_permitted: Option<bool>,
+    pub unlimited: Option<bool>,
+}
+
+/// Response from GET /copilot_internal/user
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CopilotUsageResponse {
+    pub copilot_plan: Option<String>,
+    pub quota_reset_date: Option<String>,
+    pub quota_snapshots: Option<HashMap<String, QuotaDetail>>,
+}
+
+/// Frontend-facing quota data
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CopilotQuota {
+    pub plan: String,
+    pub reset_date: String,
+    pub premium_used_percent: f64,
+    pub premium_remaining: f64,
+    pub premium_total: f64,
+    pub unlimited: bool,
 }

@@ -1,4 +1,4 @@
-use crate::auth_config::{update_auth_json, read_current_token};
+use crate::auth_config::{clear_auth_json, update_auth_json, read_current_token};
 use crate::error::AppError;
 use crate::github_oauth::{get_device_code, get_user_info, poll_for_token};
 use crate::models::{DeviceCodeResponse, GitHubProvider};
@@ -67,6 +67,22 @@ pub async fn delete_provider(pool: &SqlitePool, id: &str) -> Result<(), AppError
         .bind(id)
         .execute(pool)
         .await?;
+
+    let remaining = sqlx::query_as::<_, GitHubProvider>(
+        "SELECT * FROM github_providers ORDER BY last_used_at DESC LIMIT 1"
+    )
+    .fetch_optional(pool)
+    .await?;
+
+    match remaining {
+        Some(next) => {
+            update_auth_json(&next.access_token, &next.name)?;
+        }
+        None => {
+            clear_auth_json()?;
+        }
+    }
+
     Ok(())
 }
 

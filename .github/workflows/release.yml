@@ -48,6 +48,18 @@ jobs:
           projectPath: ./opencode-github-switcher
           tagName: ${{ github.ref_name }}
           releaseName: 'Release ${{ github.ref_name }}'
-          releaseBody: 'See the assets to download the version for your operating system.'
+          releaseBody: |
+            ## What's New
+            
+            ### ✨ Copilot Premium Request Quota Display
+            - View premium request usage percentage for each account with a visual progress bar
+            - Color-coded indicator: 🔵 normal (<50%) → 🟠 warning (50-80%) → 🔴 critical (>80%)
+            - Shows remaining/total requests count and quota reset date
+            - Supports unlimited quota display
+            - Plan type badge per account (Pro, Free, Business, Enterprise, Individual)
+            - Full i18n support (English, 简体中文, 日本語)
+            
+            ### 🐛 Bug Fixes
+            - Fixed: deleting an account now correctly removes it from OpenCode's auth.json (previously only removed from local database)
           releaseDraft: false
           prerelease: false

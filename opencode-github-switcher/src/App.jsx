@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 
-import { Github, Plus, Trash2, CheckCircle2, Copy, ExternalLink, Loader2, RefreshCw, Globe } from 'lucide-react';
+import { Github, Plus, Trash2, CheckCircle2, Copy, ExternalLink, Loader2, RefreshCw, Globe, BarChart3 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, zhCN, ja } from 'date-fns/locale';
 import { translations, languages } from './i18n';
@@ -16,6 +16,7 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [toast, setToast] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [quotas, setQuotas] = useState({});
 
   
   const [currentLang, setCurrentLang] = useState(() => {
@@ -23,6 +24,11 @@ export default function App() {
   });
 
   const t = (key) => translations[currentLang]?.[key] || translations['en'][key] || key;
+
+  const translatePlan = (plan) => {
+    const key = `plan${plan.charAt(0).toUpperCase()}${plan.slice(1).toLowerCase()}`;
+    return t(key) || plan;
+  };
 
   const getDateLocale = () => {
     switch(currentLang) {
@@ -65,11 +71,31 @@ export default function App() {
     }
   };
 
+  const fetchQuota = async (providerId) => {
+    try {
+      setQuotas(prev => ({ ...prev, [providerId]: { loading: true } }));
+      const quota = await invoke('fetch_copilot_quota', { id: providerId });
+      setQuotas(prev => ({ ...prev, [providerId]: { data: quota, loading: false } }));
+    } catch (e) {
+      setQuotas(prev => ({ ...prev, [providerId]: { error: e.toString(), loading: false } }));
+    }
+  };
+
+  const fetchAllQuotas = async (providerList) => {
+    for (const p of providerList) {
+      fetchQuota(p.id);
+    }
+  };
+
   useEffect(() => {
     const init = async () => {
       await syncActiveAccount();
-      // fetchProviders is already called inside syncActiveAccount, but we can call it again or rely on it.
-      await fetchProviders();
+      const data = await invoke('list_providers');
+      setProviders(data);
+      setLoading(false);
+      if (data.length > 0) {
+        fetchAllQuotas(data);
+      }
     };
     init();
   }, []);
@@ -287,67 +313,127 @@ export default function App() {
             <div className="grid gap-4">
               {sortedProviders.map((provider) => {
                 const isActive = activeProvider && activeProvider.id === provider.id;
+                const quotaState = quotas[provider.id];
+                const quota = quotaState?.data;
                 
                 return (
                   <div 
                     key={provider.id} 
-                    className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${
+                    className={`p-5 rounded-2xl border transition-all ${
                       isActive 
                         ? 'bg-white border-blue-200 ring-1 ring-blue-100 shadow-sm' 
                         : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${
-                        isActive ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'
-                      }`}>
-                        {provider.avatar_url ? (
-                          <img src={provider.avatar_url} alt={provider.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <Github className="w-5 h-5" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden ${
+                          isActive ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'
+                        }`}>
+                          {provider.avatar_url ? (
+                            <img src={provider.avatar_url} alt={provider.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <Github className="w-5 h-5" />
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-slate-900">
+                              {provider.name || 'Unknown User'}
+                            </span>
+                            {isActive && (
+                              <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">
+                                {t('active')}
+                              </span>
+                            )}
+                            {quota && (
+                              <span className="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">
+                                {translatePlan(quota.plan)}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
+                            <span>{t('added')}: {provider.created_at ? new Date(provider.created_at * 1000).toLocaleDateString() : 'Unknown'}</span>
+                            {provider.last_used_at && (
+                              <>
+                                <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                <span>{t('lastUsed')}: {formatDistanceToNow(provider.last_used_at * 1000, { addSuffix: true, locale: getDateLocale() })}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        {!isActive && (
+                          <button
+                            onClick={() => handleSwitch(provider.id)}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"
+                          >
+                            {t('switchTo')}
+                          </button>
+                        )}
+                        
+                        <button
+                          onClick={() => handleDelete(provider.id)}
+                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title={t('removeAccount')}
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {quotaState?.loading && (
+                      <div className="mt-3 flex items-center gap-2 text-xs text-slate-400">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        {t('quotaLoading')}
+                      </div>
+                    )}
+
+                    {quotaState?.error && (
+                      <div className="mt-3 flex items-center gap-2 text-xs text-red-400">
+                        <BarChart3 className="w-3 h-3" />
+                        {t('quotaError')}
+                      </div>
+                    )}
+
+                    {quota && !quota.unlimited && (
+                      <div className="mt-3 pt-3 border-t border-slate-100">
+                        <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+                          <span className="flex items-center gap-1">
+                            <BarChart3 className="w-3 h-3" />
+                            {t('quotaPremiumRequests')}: {quota.premium_used_percent.toFixed(1)}% {t('quotaUsed')}
+                          </span>
+                          <span>
+                            {Math.round(quota.premium_remaining)}/{Math.round(quota.premium_total)} {t('quotaRemaining')}
+                          </span>
+                        </div>
+                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              quota.premium_used_percent > 80 ? 'bg-red-500' :
+                              quota.premium_used_percent > 50 ? 'bg-amber-500' : 'bg-blue-500'
+                            }`}
+                            style={{ width: `${Math.min(quota.premium_used_percent, 100)}%` }}
+                          />
+                        </div>
+                        {quota.reset_date && (
+                          <div className="text-[10px] text-slate-400 mt-1.5">
+                            {t('quotaResetDate')}: {quota.reset_date}
+                          </div>
                         )}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900">
-                            {provider.name || 'Unknown User'}
-                          </span>
-                          {isActive && (
-                            <span className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full font-medium uppercase tracking-wide">
-                              {t('active')}
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
-                          <span>{t('added')}: {provider.created_at ? new Date(provider.created_at * 1000).toLocaleDateString() : 'Unknown'}</span>
-                          {provider.last_used_at && (
-                            <>
-                              <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                              <span>{t('lastUsed')}: {formatDistanceToNow(provider.last_used_at * 1000, { addSuffix: true, locale: getDateLocale() })}</span>
-                            </>
-                          )}
+                    )}
+
+                    {quota && quota.unlimited && (
+                      <div className="mt-3 pt-3 border-t border-slate-100">
+                        <div className="flex items-center gap-1 text-xs text-green-600">
+                          <BarChart3 className="w-3 h-3" />
+                          {t('quotaPremiumRequests')}: {t('quotaUnlimited')}
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      {!isActive && (
-                        <button
-                          onClick={() => handleSwitch(provider.id)}
-                          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-lg transition-colors"
-                        >
-                          {t('switchTo')}
-                        </button>
-                      )}
-                      
-                      <button
-                        onClick={() => handleDelete(provider.id)}
-                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title={t('removeAccount')}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
+                    )}
                   </div>
                 );
               })}

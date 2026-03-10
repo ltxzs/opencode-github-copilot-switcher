@@ -4,6 +4,7 @@ pub mod database;
 pub mod github_oauth;
 pub mod auth_config;
 pub mod provider_service;
+pub mod copilot_quota;
 pub mod commands;
 pub mod state;
 
@@ -21,7 +22,8 @@ pub fn run() {
             commands::delete_provider,
             commands::switch_provider,
             commands::open_url,
-            commands::sync_active_account
+            commands::sync_active_account,
+            commands::fetch_copilot_quota
         ])
         .setup(|_app| {
             // Setup logic will be initialized in commands/state when called

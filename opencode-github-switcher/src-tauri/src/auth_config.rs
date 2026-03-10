@@ -74,14 +74,23 @@ pub fn read_current_token() -> Option<String> {
                         if let Ok(data) = serde_json::from_str::<Value>(&content) {
                             let mut found_token = None;
                             // Try direct format
-                            if let Some(token) = data.get("github-copilot").and_then(|v| v.get("access")).and_then(|v| v.as_str()) {
-                                found_token = Some(token.to_string());
-                            } 
-                            // Try nested format
-                            else if let Some(token) = data.get("auth").and_then(|v| v.get("github-copilot")).and_then(|v| v.get("access")).and_then(|v| v.as_str()) {
+                            if let Some(token) = data
+                                .get("github-copilot")
+                                .and_then(|v| v.get("access"))
+                                .and_then(|v| v.as_str())
+                            {
                                 found_token = Some(token.to_string());
                             }
-                            
+                            // Try nested format
+                            else if let Some(token) = data
+                                .get("auth")
+                                .and_then(|v| v.get("github-copilot"))
+                                .and_then(|v| v.get("access"))
+                                .and_then(|v| v.as_str())
+                            {
+                                found_token = Some(token.to_string());
+                            }
+
                             if found_token.is_some() {
                                 latest_time = modified;
                                 latest_token = found_token;
@@ -93,6 +102,45 @@ pub fn read_current_token() -> Option<String> {
         }
     }
     latest_token
+}
+
+/// Remove the github-copilot auth entry from all auth.json files and kill OpenCode processes.
+pub fn clear_auth_json() -> Result<(), AppError> {
+    let dirs = get_opencode_dirs();
+
+    let clear_fn = |data: &mut Value| {
+        if !data.is_object() {
+            return;
+        }
+        // Remove direct format
+        if data.get("github-copilot").is_some() {
+            data.as_object_mut().unwrap().remove("github-copilot");
+        }
+        // Remove nested format
+        if let Some(auth_obj) = data.get_mut("auth") {
+            if let Some(obj) = auth_obj.as_object_mut() {
+                obj.remove("github-copilot");
+            }
+        }
+    };
+
+    for mut dir in dirs {
+        dir.push("auth.json");
+        if dir.exists() {
+            let _ = update_json_file(&dir, clear_fn);
+        }
+    }
+
+    // Force kill OpenCode node processes to force reload
+    let _ = Command::new("powershell")
+        .args(&[
+            "-WindowStyle", "Hidden",
+            "-Command",
+            "Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'node.exe' -and $_.CommandLine -match 'opencode' } | Invoke-CimMethod -MethodName Terminate"
+        ])
+        .spawn();
+
+    Ok(())
 }
 
 pub fn update_auth_json(access_token: &str, _username: &str) -> Result<(), AppError> {
