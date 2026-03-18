@@ -121,7 +121,7 @@ pub async fn sync_active_account(pool: &SqlitePool) -> Result<(), AppError> {
             .fetch_optional(pool)
             .await?;
 
-            if let Some(mut provider) = existing {
+            if let Some(_provider) = existing {
                 // Update token and last used time if it already exists
                 sqlx::query(
                     "UPDATE github_providers SET access_token = ?, name = ?, email = ?, avatar_url = ?, last_used_at = ? WHERE github_id = ?"

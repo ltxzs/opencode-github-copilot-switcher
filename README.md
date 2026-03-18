@@ -8,6 +8,8 @@ A seamless Tauri-based desktop application designed to manage, switch, and authe
 
 - **Multi-Account Management:** Easily add and switch between multiple GitHub accounts.
 - **Hot-Switching:** Seamlessly switch accounts directly in your current session without needing to restart OpenCode.
+**Note:** Seamless hot-switching requires OpenCode to be launched from a **PowerShell** environment. If OpenCode is running in a CMD environment, switching accounts will terminate the OpenCode process and interrupt the current session. Restarting OpenCode will restore normal operation with the successfully switched account.
+
 - **Native Device Flow Authentication:** Utilizes the official OpenCode GitHub Copilot Client ID to ensure full compatibility with the OpenCode extension.
 - **Auto-Copy Device Code:** Automatically copies your authentication device code to the clipboard and provides an intuitive Toast notification.
 - **Cross-Platform:** Available for Windows, macOS, and Linux.

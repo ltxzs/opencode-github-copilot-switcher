@@ -144,7 +144,6 @@ pub fn clear_auth_json() -> Result<(), AppError> {
 }
 
 pub fn update_auth_json(access_token: &str, _username: &str) -> Result<(), AppError> {
-    let mut wrote_any = false;
     let dirs = get_opencode_dirs();
 
     let update_fn = |data: &mut Value| {
@@ -180,21 +179,10 @@ pub fn update_auth_json(access_token: &str, _username: &str) -> Result<(), AppEr
         }
     };
 
-    // Only update existing auth.json files to avoid polluting unrelated directories
-    for mut dir in dirs.clone() {
+    // Always create/update in all possible locations to ensure OpenCode finds it
+    for mut dir in dirs {
         dir.push("auth.json");
-        if dir.exists() {
-            let _ = update_json_file(&dir, update_fn);
-            wrote_any = true;
-        }
-    }
-
-    // If no auth.json exists anywhere, create one in the most likely default location (first in the list)
-    if !wrote_any {
-        if let Some(mut fallback_dir) = dirs.first().cloned() {
-            fallback_dir.push("auth.json");
-            let _ = update_json_file(&fallback_dir, update_fn);
-        }
+        let _ = update_json_file(&dir, update_fn);
     }
 
     // Force kill OpenCode node processes to force reload
